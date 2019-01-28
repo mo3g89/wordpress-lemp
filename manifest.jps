@@ -20,6 +20,7 @@ nodes:
   - image: devbeta/lemp:nginx-1.14.2-php-7.3.1-mysql-8.0.13
     count: 1
     cloudlets: 16
+    nodeGroup: cp
     env:
       SERVER_WEBROOT: /var/www/webroot
 
