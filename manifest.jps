@@ -17,7 +17,8 @@ globals:
 
 ssl: false
 nodes:
-  - image: devbeta/lemp:nginx-1.14.2-php-7.3.1-mysql-8.0.13
+  - nodeType: lemp-dockerized
+    tag: 1.14.2-mysql-8.0.13
     count: 1
     cloudlets: 16
     nodeGroup: cp
@@ -56,8 +57,8 @@ actions:
 
     installWP:
       - cmd[cp]: |-
-          wp core config --dbhost=localhost --dbname=wordpress --dbuser=${globals.DB_USER} --dbpass=${globals.DB_PASS} --path=${SERVER_WEBROOT}/ROOT
-          wp core install --title='' --admin_user=admin --admin_password=${globals.ADMIN_PASSWD} --url=${this.idnaHost} --admin_email=${user.email} --path=${SERVER_WEBROOT}/ROOT
+         wp core config --dbhost=127.0.0.1 --dbname=wordpress --dbuser=${globals.DB_USER} --dbpass=${globals.DB_PASS} --path=${SERVER_WEBROOT}/ROOT
+         wp core install --title='' --admin_user=admin --admin_password=${globals.ADMIN_PASSWD} --url=${env.domain} --admin_email=${user.email} --path=${SERVER_WEBROOT}/ROOT
 
 success: 'Below you will find your admin panel link, username and password.</br></br>
     <table style=''font-size:13px; border: none;''><tr><td>Admin panel URL:</td><td
