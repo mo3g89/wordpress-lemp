@@ -1,3 +1,4 @@
+[mysqld]
 max_connections=500
 join_buffer_size = 3M
 tmp_table_size = 128M
