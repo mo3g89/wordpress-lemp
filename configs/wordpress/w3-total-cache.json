@@ -120,7 +120,7 @@
 "pgcache.redis.dbid": 0,
 "pgcache.cache.query": false,
 "pgcache.cache.home": true,
-"pgcache.cache.feed": false,
+"pgcache.cache.feed": true,
 "pgcache.cache.nginx_handle_xml": false,
 "pgcache.cache.ssl": true,
 "pgcache.cache.404": false,
