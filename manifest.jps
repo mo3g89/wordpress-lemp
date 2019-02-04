@@ -27,21 +27,35 @@ nodes:
 
   
 onInstall:
+  - log: Set Node Display Name
+  - setNodeDisplayName [cp]: LEMP
+ 
+  - uploadNginxPHPConfig
   - uploadDBConfig
   - createDBUser
   - createDatabase
   - deployContent
   - installWPCLI
   - installWP
+  - installPlugins
 
 actions:
+    
+    uploadNginxPHPConfig:
+      - cmd[cp]: |-
+         wget ${baseUrl}/configs/nginx/nginx.conf -O /etc/nginx/nginx.conf
+         wget ${baseUrl}/configs/nginx/default.conf -O /etc/nginx/conf.d/default.conf
+         wget ${baseUrl}/configs/nginx/fastcgi_cache.conf -O /etc/nginx/conf.d/fastcgi_cache.conf
+         wget ${baseUrl}/configs/php/wp-upload.ini -O /etc/php.d/wp-upload.ini
+         wget ${baseUrl}/configs/php/opcache.ini -O /etc/php.d/opcache.ini
+         wget ${baseUrl}/configs/php/extensions.ini -O /etc/php.d/extensions.ini
+         jem service restart nginx
     
     uploadDBConfig:
       - cmd [cp]: |-
           wget ${baseUrl}/configs/mysql/wordpress.cnf -O /etc/mysql/conf.d/wordpress.cnf
           chmod 664 /etc/mysql/conf.d/wordpress.cnf
           jem service restart mysql
-        user: root
     
     createDBUser:
       - cmd [cp]: |-
@@ -67,5 +81,13 @@ actions:
       - cmd[cp]: |-
          wp core config --dbhost=127.0.0.1 --dbname=wordpress --dbuser=${globals.DB_USER} --dbpass=${globals.DB_PASS} --path=${SERVER_WEBROOT}/ROOT
          wp core install --title='' --admin_user=admin --admin_password=${globals.ADMIN_PASSWD} --url=${env.domain} --admin_email=${user.email} --path=${SERVER_WEBROOT}/ROOT
+         wp rewrite structure '/%postname%/' --path=${SERVER_WEBROOT}/ROOT
+         
+    installPlugins:
+      - cmd[cp]: |-
+         wget ${baseUrl}/configs/wordpress/plugins -O ~/plugins
+         for plugin in $(cat ~/plugins); do wp plugin install $plugin --activate --path=${SERVER_WEBROOT}/ROOT; done
+         wget ${baseUrl}/configs/wordpress/w3-total-cache.json -O ~/w3-total-cache.json
+         wp w3-total-cache import ~/w3-total-cache.json --path=${SERVER_WEBROOT}/ROOT
 
 success: /text/success.md
